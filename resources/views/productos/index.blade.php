@@ -1,67 +1,58 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Productos | Práctica</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <h1 class="mb-4">Lista de Productos</h1>
 
-@section('content')
-<div class="container">
-    <h1 class="mb-4">Lista de pedidos - Bochito</h1>
+        @if (session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
 
-    @if (session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
+        <a href="{{ route('productos.create') }}" class="btn btn-primary mb-3">
+            Agregar producto
+        </a>
 
-    <a href="{{ route('productos.create') }}" class="btn btn-primary mb-3">
-        Agregar pedido
-    </a>
-
-    <table class="table table-bordered table-striped">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Cliente</th>
-                <th>Producto</th>
-                <th>Cantidad</th>
-                <th>Precio</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-
-        <tbody>
-            @forelse ($pedidos as $pedido)
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
                 <tr>
-                    <td>{{ $pedido['id'] }}</td>
-                    <td>{{ $pedido['cliente'] }}</td>
-                    <td>{{ $pedido['producto'] }}</td>
-                    <td>{{ $pedido['cantidad'] }}</td>
-                    <td>${{ number_format((float) ($pedido['precio'] ?? 0), 2) }}</td>
-
-                    <td>
-                        <a href="{{ route('productos.edit', $pedido['id']) }}"
-                           class="btn btn-warning btn-sm">
-                            Editar
-                        </a>
-
-                        <form action="{{ route('productos.destroy', $pedido['id']) }}"
-                              method="POST"
-                              class="d-inline"
-                              onsubmit="return confirm('¿Estás segura de eliminar este pedido?');">
-                            @csrf
-                            @method('DELETE')
-
-                            <button type="submit" class="btn btn-danger btn-sm">
-                                Eliminar
-                            </button>
-                        </form>
-                    </td>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Precio</th>
+                    <th>Stock</th>
+                    <th>Acciones</th>
                 </tr>
-            @empty
-                <tr>
-                    <td colspan="6" class="text-center">
-                        No hay pedidos registrados.
-                    </td>
-                </tr>
-            @endforelse
-        </tbody>
-    </table>
-</div>
-@endsection
+            </thead>
+            <tbody>
+                @forelse ($productos as $producto)
+                    <tr>
+                        <td>{{ $producto->id }}</td>
+                        <td>{{ $producto->nombre }}</td>
+                        <td>${{ number_format((float) $producto->precio, 2) }}</td>
+                        <td>{{ $producto->stock }}</td>
+                        <td>
+                            <a href="{{ route('productos.edit', $producto->id) }}" class="btn btn-warning btn-sm">Editar</a>
+                            <form action="{{ route('productos.destroy', $producto->id) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Estás segura de eliminar este producto?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="5" class="text-center">No hay productos registrados.</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
